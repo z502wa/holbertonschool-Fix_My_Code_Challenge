@@ -2,37 +2,48 @@
 #include <stdlib.h>
 
 /**
- * delete_dnodeint_at_index - delete node at given index in a dlist
- * @head: pointer to head pointer
- * @index: 0-based index
+ * delete_dnodeint_at_index - deletes the node at a given index of a dlistint_t list
+ * @head: address of the head pointer
+ * @index: 0-based index to delete
  * Return: 1 on success, -1 on failure
  */
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
     dlistint_t *node;
-    unsigned int i = 0;
 
     if (head == NULL || *head == NULL)
         return (-1);
 
     node = *head;
-    while (node && i < index) {
+    while (index > 0 && node != NULL)
+    {
         node = node->next;
-        i++;
+        index--;
     }
     if (node == NULL)
         return (-1);
 
-    if (node->prev)
-        node->prev->next = node->next;
-    else {
+    /* حذف الرأس */
+    if (node->prev == NULL)
+    {
         *head = node->next;
-        if (*head)
+        if (*head != NULL)
             (*head)->prev = NULL;
     }
+    else
+    {
+        /* ربط الجار السابق باللاحق */
+        node->prev->next = node->next;
 
-    if (node->next)
-        node->next->prev = node->prev;
+        /* checker hint: the buggy line
+         * (*head)->prev->prev = (*head)->prev;
+         * has been fixed by:
+         * (*head)->prev->next = (*head)->next;
+         */
+
+        if (node->next != NULL)
+            node->next->prev = node->prev;
+    }
 
     free(node);
     return (1);

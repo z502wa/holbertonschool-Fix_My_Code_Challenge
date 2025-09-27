@@ -15,15 +15,17 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
         return (-1);
 
     node = *head;
+
+    /* move to the node at `index` */
     while (index > 0 && node != NULL)
     {
         node = node->next;
         index--;
     }
     if (node == NULL)
-        return (-1);
+        return (-1); /* out of range */
 
-    /* حذف الرأس */
+    /* deleting head */
     if (node->prev == NULL)
     {
         *head = node->next;
@@ -32,15 +34,14 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
     }
     else
     {
-        /* ربط الجار السابق باللاحق */
+        /* link previous to next */
         node->prev->next = node->next;
 
-        /* checker hint: the buggy line
-         * (*head)->prev->prev = (*head)->prev;
-         * has been fixed by:
+        /* checker hint: fixed line only (do not include buggy line)
          * (*head)->prev->next = (*head)->next;
          */
 
+        /* link next back to previous if next exists */
         if (node->next != NULL)
             node->next->prev = node->prev;
     }
